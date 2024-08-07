@@ -17,11 +17,15 @@ class Temp:
 
     def animate(self):
         x_list, y_list = h.animate("cansat/files/data.txt")
+        x2_list, y2_list = h.animate("cansat/files/groundstation.txt")
         self.ax.clear()
         self.ax.set_title("Temperature ('C)", **font)
         self.ax.set_ylabel("Temperature ('C)", **font)
         self.ax.set_xlabel("Time (s)", **font)
-        
-        self.ax.plot(x_list, y_list)
+        self.ax.plot(x_list, y_list, label="Cansat")
+        self.ax.plot(x2_list, y2_list, label="Groundstation")
+        self.ax.spines["right"].set_visible(False)
+        self.ax.spines["top"].set_visible(False)
+        self.ax.legend(fontsize="9")
         self.canvas.draw()
         self.parent.after(1000, self.animate)
