@@ -1,5 +1,14 @@
 <div>
 
+<style type="text/css">
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    
+    text {
+    font-family: 'Roboto', sans-serif;
+    fill: #000000;
+    }
+</style>
+
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -12,13 +21,7 @@
    xml:space="preserve"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><style type="text/css">
-      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-      text {
-        font-family: 'Roboto', sans-serif;
-        fill: #000000;
-      }
-    </style><defs
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
      id="defs1"><clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath30"><circle
