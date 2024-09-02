@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from cansat.figure import *
+from figure import *
 from tkinter import *
 from tkinter import ttk
 import time
