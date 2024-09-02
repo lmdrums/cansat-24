@@ -1,4 +1,4 @@
-from cansat.gui import main as gui
+from apollosat.gui import main as gui
 
 def main():
     gui()

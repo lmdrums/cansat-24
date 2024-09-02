@@ -1,4 +1,6 @@
 def animate(filename: str) -> tuple:
+    """Pulls and returns data from the txt files so that the graph can be updated"""
+
     with open(filename) as data:
         pull_data = data.read()
         data_list = pull_data.split("\n")
