@@ -62,11 +62,11 @@ class App(CTk):
 
         self.radio_strength_label = CTkLabel(self.frame, text="80dB", font=c.HEADER_FONT_NORMAL)
         self.radio_strength_label.grid(column=1, row=2, padx=(5,0), pady=(10,0), sticky="w")
-        self.est_altitude_label = CTkLabel(self.frame, text="80dB", font=c.HEADER_FONT_NORMAL)
+        self.est_altitude_label = CTkLabel(self.frame, text="150m", font=c.HEADER_FONT_NORMAL)
         self.est_altitude_label.grid(column=1, row=3, padx=(5,0), pady=(10,0), sticky="w")
-        self.gps_altitude_label = CTkLabel(self.frame, text="80dB", font=c.HEADER_FONT_NORMAL)
+        self.gps_altitude_label = CTkLabel(self.frame, text="152m", font=c.HEADER_FONT_NORMAL)
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
-        self.est_speed_label = CTkLabel(self.frame, text="80dB", font=c.HEADER_FONT_NORMAL)
+        self.est_speed_label = CTkLabel(self.frame, text="5m/s", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
         
     def change_map(self, new_map: str):
