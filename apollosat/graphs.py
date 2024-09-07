@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 import apollosat.helpers as h
+import apollosat.constants as c
+from utils.path import get_resource_path
 
 font = {"fontname":"Segoe UI"}
 
@@ -21,17 +23,19 @@ class Temp:
     def animate(self) -> None:
         """Animates the graph every second"""
 
-        x_list, y_list = h.animate("apollosat/files/data.txt")
-        x2_list, y2_list = h.animate("apollosat/files/groundstation.txt")
+        x_list, y_list = h.animate(get_resource_path(c.MAIN_DATA))
+        x2_list, y2_list = h.animate(get_resource_path(c.GROUNDSTATION_DATA))
         self.ax.clear()
-        self.ax.set_title("Temperature ('C)", **font)
-        self.ax.set_ylabel("Temperature ('C)", **font)
+        self.ax.set_title("Temperature (°C)", **font)
+        self.ax.set_ylabel("Temperature (°C)", **font)
         self.ax.set_xlabel("Time (s)", **font)
         self.ax.plot(x_list, y_list, label="Cansat")
         self.ax.plot(x2_list, y2_list, label="Groundstation")
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)
         self.ax.legend(fontsize="9")
+        self.ax.patch.set_edgecolor("black")
+        self.ax.patch.set_linewidth(1)
         self.canvas.draw()
         self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
 
@@ -50,8 +54,8 @@ class Humidity:
     def animate(self) -> None:
         """Animates the graph every second"""
 
-        x_list, y_list = h.animate("apollosat/files/data.txt")
-        x2_list, y2_list = h.animate("apollosat/files/groundstation.txt")
+        x_list, y_list = h.animate(get_resource_path(c.MAIN_DATA))
+        x2_list, y2_list = h.animate(get_resource_path(c.GROUNDSTATION_DATA))
         self.ax.clear()
         self.ax.set_title("Humidity (%)", **font)
         self.ax.set_ylabel("Humidity (%)", **font)
@@ -62,6 +66,8 @@ class Humidity:
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)
         self.ax.legend(fontsize="9")
+        self.ax.patch.set_edgecolor("black")
+        self.ax.patch.set_linewidth(1)
         self.canvas.draw()
         self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
 
@@ -80,8 +86,8 @@ class Pressure:
     def animate(self) -> None:
         """Animates the graph every second"""
 
-        x_list, y_list = h.animate("apollosat/files/data.txt")
-        x2_list, y2_list = h.animate("apollosat/files/groundstation.txt")
+        x_list, y_list = h.animate(get_resource_path(c.MAIN_DATA))
+        x2_list, y2_list = h.animate(get_resource_path(c.GROUNDSTATION_DATA))
         self.ax.clear()
         self.ax.set_title("Pressure (hPa)", **font)
         self.ax.set_ylabel("Pressure (hPa)", **font)
@@ -91,6 +97,8 @@ class Pressure:
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)
         self.ax.legend(fontsize="9")
+        self.ax.patch.set_edgecolor("black")
+        self.ax.patch.set_linewidth(1)
         self.canvas.draw()
         self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
 
@@ -109,8 +117,8 @@ class Gas:
     def animate(self) -> None:
         """Animates the graph every second"""
 
-        x_list, y_list = h.animate("apollosat/files/data.txt")
-        x2_list, y2_list = h.animate("apollosat/files/groundstation.txt")
+        x_list, y_list = h.animate(get_resource_path(c.MAIN_DATA))
+        x2_list, y2_list = h.animate(get_resource_path(c.GROUNDSTATION_DATA))
         self.ax.clear()
         self.ax.set_title("Gas Quality (Ω)", **font)
         self.ax.set_ylabel("Humidity (Ω)", **font)
@@ -120,5 +128,7 @@ class Gas:
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)
         self.ax.legend(fontsize="9")
+        self.ax.patch.set_edgecolor("black")
+        self.ax.patch.set_linewidth(1)
         self.canvas.draw()
         self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
