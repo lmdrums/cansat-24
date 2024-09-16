@@ -1,3 +1,6 @@
+from colorama import Style
+import time
+
 def animate(filename: str) -> tuple:
     """Pulls and returns data from the txt files so that the graph can be updated"""
 
@@ -13,3 +16,19 @@ def animate(filename: str) -> tuple:
                 y_list.append(int(y))
 
     return x_list, y_list
+
+def gradient_text(text):
+    colors = [
+        '\033[38;5;214m',
+        '\033[38;5;208m',
+        '\033[38;5;202m',
+        '\033[38;5;196m',
+    ]
+    
+    color_index = 0
+    for line in text.splitlines():
+        for char in line:
+            print(colors[color_index % len(colors)] + char, end="")
+            color_index += 1
+        print(Style.RESET_ALL)
+        time.sleep(0.05)
