@@ -21,7 +21,7 @@ def wipe_file(filename: str):
     with open(filename, "w") as file:
         file.truncate()
 
-def record_data():
+def record_data(parent):
     """Records all mission data in one file"""
 
     global cansat_connected
@@ -30,8 +30,9 @@ def record_data():
     data = raw_data.decode("utf-8").strip()
 
     if not cansat_connected:
-        print("CanSat connected")
-        cansat_connected = True
+        if raw_data:
+            parent.device_connected()
+            cansat_connected = True
 
     with open(c.MAIN_DATA, "a", encoding="utf-8") as file:
         file.write(f"{data}\n")

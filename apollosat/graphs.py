@@ -158,7 +158,7 @@ class Gas:
             
         self.ax.clear()
         self.ax.set_title("Gas Quality (Ω)", **font)
-        self.ax.set_ylabel("Humidity (Ω)", **font)
+        self.ax.set_ylabel("Gas Quality (Ω)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.plot(x_list, y_list, label="Cansat")
         self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
