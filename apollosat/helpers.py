@@ -1,19 +1,48 @@
 from colorama import Style
 import time
+import apollosat.constants as c
+import serial
 
-def animate(filename: str) -> tuple:
+serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
+
+cansat_connected = False
+
+def wipe_file(filename: str):
+    with open(filename, "w") as file:
+        file.truncate()
+
+def record_data():
+    """Records all mission data in one file"""
+
+    global cansat_connected
+    raw_data = serial_connection.readline()
+    data = raw_data.decode("utf-8").strip()
+
+    if not cansat_connected:
+        print("CanSat connected")
+        cansat_connected = True
+
+    with open(c.MAIN_DATA, "a", encoding="utf-8") as file:
+        file.write(f"{data}\n")
+
+def animate(data_dict: dict, key: str) -> tuple:
     """Pulls and returns data from the txt files so that the graph can be updated"""
 
-    with open(filename) as data:
-        pull_data = data.read()
-        data_list = pull_data.split("\n")
-        x_list = []
-        y_list = []
-        for line in data_list:
-            if len(line) > 1:
-                x, y = line.split(",")
-                x_list.append(int(x))
-                y_list.append(int(y))
+    column_index = data_dict[key]
+    packet_index = data_dict["packet_count"]
+
+    x_list = []
+    y_list = []
+
+    with open(c.MAIN_DATA, "r") as file:
+        for line in file:
+            if len(line.strip()) > 0:
+                try:
+                    columns = line.split()  # Split line into columns by spaces
+                    x_list.append(int(columns[packet_index]))
+                    y_list.append(float(columns[column_index]))
+                except (IndexError, ValueError) as e:
+                    print(f"Skipping deformed line: {line.strip()} - {e}")
 
     return x_list, y_list
 
