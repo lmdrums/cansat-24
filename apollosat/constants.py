@@ -26,7 +26,7 @@ BANNER_IMAGE = os.path.join(IMAGES_FOLDER, "banner.png")
 # Data
 
 MAIN_DATA = os.path.join(FILES_FOLDER, "data.txt")
-GROUNDSTATION_DATA = os.path.join(FILES_FOLDER, "groundstation.txt")
+PERMANENT_DATA = os.path.join(FILES_FOLDER, "permanent.txt")
 DATA_DICT = {
     "packet_count":0,
     "radio_strength":1,

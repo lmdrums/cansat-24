@@ -4,10 +4,20 @@ import apollosat.constants as c
 import serial
 
 serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
-
 cansat_connected = False
 
+def permanent_file(filename: str) -> None:
+    """Writes all data from temporary data.txt file and writes it to a permanent file"""
+
+    with open(c.MAIN_DATA, "r") as file:
+        contents = file.read()
+
+    with open(filename, "a") as file:
+        file.write(contents)
+
 def wipe_file(filename: str):
+    """Deletes contents of data file at beginning of program"""
+
     with open(filename, "w") as file:
         file.truncate()
 
@@ -15,6 +25,7 @@ def record_data():
     """Records all mission data in one file"""
 
     global cansat_connected
+    serial_connection.reset_input_buffer()
     raw_data = serial_connection.readline()
     data = raw_data.decode("utf-8").strip()
 
@@ -45,6 +56,25 @@ def animate(data_dict: dict, key: str) -> tuple:
                     print(f"Skipping deformed line: {line.strip()} - {e}")
 
     return x_list, y_list
+
+def animate_text() -> tuple:
+    radio_strength = None
+    estimated_altitude = None
+    
+    with open(c.MAIN_DATA, "r") as file:
+        for line in file:
+            if len(line.strip()) > 0:
+                try:
+                    data_fields = line.strip().split(" ")
+
+                    radio_strength = data_fields[c.DATA_DICT["radio_strength"]]
+                    estimated_altitude = data_fields[c.DATA_DICT["cansat_estimated_altitude"]]
+                   
+                except (IndexError, ValueError) as e:
+                    print(f"Skipping deformed line: {line.strip()} - {e}")
+    
+    return radio_strength, estimated_altitude
+
 
 def gradient_text(text):
     colors = [
