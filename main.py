@@ -3,7 +3,8 @@ import apollosat.helpers as h
 import apollosat.constants as c
 
 def main():
-    h.gradient_text(c.ASCII_LOGO)
+    #h.gradient_text(c.ASCII_LOGO)
+    h.wipe_file(c.MAIN_DATA)
     gui()
 
 if __name__ == "__main__":

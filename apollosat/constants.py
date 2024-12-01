@@ -27,3 +27,19 @@ BANNER_IMAGE = os.path.join(IMAGES_FOLDER, "banner.png")
 
 MAIN_DATA = os.path.join(FILES_FOLDER, "data.txt")
 GROUNDSTATION_DATA = os.path.join(FILES_FOLDER, "groundstation.txt")
+DATA_DICT = {
+    "packet_count":0,
+    "radio_strength":1,
+    "ground_temperature":2,
+    "ground_pressure":3,
+    "cansat_temperature":4,
+    "cansat_pressure":5,
+    "cansat_estimated_altitude":6,
+    "cansat_humidity":7,
+    "cansat_gas":8
+}
+
+# Serial
+PORT = "COM3"
+BAUDRATE = 9600
+BYTESIZE = 8

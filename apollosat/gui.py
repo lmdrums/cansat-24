@@ -7,6 +7,8 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 import numpy as np
 from PIL import Image, ImageTk
 
+import threading
+
 import apollosat.helpers as h
 import apollosat.graphs as g
 import apollosat.constants as c
@@ -40,7 +42,7 @@ class App(CTk):
         g.Humidity(self)
         g.Pressure(self)
         g.Gas(self)
-
+        
         self.map = tkmap.TkinterMapView(self.frame, height=400)
         self.map.grid(column=0, row=1, padx=(20,0),sticky="ew")
         self.map.set_position(48.860381, 2.338594)
@@ -68,7 +70,18 @@ class App(CTk):
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
         self.est_speed_label = CTkLabel(self.frame, text="5m/s", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
-        
+        self.after(1000, self.record_data)
+
+    def record_data(self):
+        def task():
+            try:
+                h.record_data()
+            except Exception as e:
+                print(f"Error during data recording: {e}")
+
+        threading.Thread(target=task).start()
+        self.after(1000, self.record_data)
+
     def change_map(self, new_map: str):
         """Changes the view (tiles) of the map"""
         if new_map == "OpenStreetMap":
