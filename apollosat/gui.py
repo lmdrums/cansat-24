@@ -43,9 +43,9 @@ class App(CTk):
         g.Pressure(self)
         g.Gas(self)
         
-        self.map = tkmap.TkinterMapView(self.frame, height=400)
+        self.map = tkmap.TkinterMapView(self.frame, height=400, database_path="apollosat/offline_tiles.db", use_database_only=True)
         self.map.grid(column=0, row=1, padx=(20,0),sticky="ew")
-        self.map.set_position(48.860381, 2.338594)
+        #self.map.set_position(48.860381, 2.338594)
         self.map_option_menu = CTkOptionMenu(self.frame, values=["OpenStreetMap", "Google Normal", "Google Satellite"],
                                              command=self.change_map, font=c.FONT, width=160)
         self.map_option_menu.grid(column=2, row=5, pady=(10,0), sticky="e")
@@ -73,11 +73,29 @@ class App(CTk):
         self.record_data()
         self.animate_text()
 
+    def device_connected(self):
+        self.flash_window = CTkToplevel(self)
+        self.flash_window.geometry(f"{self.winfo_width()}x{self.winfo_height()}+{self.winfo_x()}+{self.winfo_y()}")
+        self.flash_window.overrideredirect(True)
+        self.flash_window.attributes("-topmost", True)
+        self.flash_window.attributes("-alpha", 0.7)
+
+        label = CTkLabel(
+            self.flash_window, 
+            text="CanSat Connected!", 
+            font=("Segoe UI", 34, "bold"), 
+            text_color="black",
+            corner_radius=10
+        )
+        label.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.after(2000, self.flash_window.destroy)
+
     def record_data(self):
         """Records data to file"""
         def task():
             try:
-                h.record_data()
+                h.record_data(self)
             except Exception as e:
                 print(f"Error during data recording: {e}")
 
