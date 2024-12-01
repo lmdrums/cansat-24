@@ -4,6 +4,7 @@ import apollosat.constants as c
 
 def main():
     #h.gradient_text(c.ASCII_LOGO)
+    #h.permanent_file(c.PERMANENT_DATA)
     h.wipe_file(c.MAIN_DATA)
     gui()
 

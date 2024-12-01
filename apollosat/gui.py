@@ -62,17 +62,19 @@ class App(CTk):
         self.banner = CTkLabel(self.frame, text="", image=self.banner_image)
         self.banner.grid(column=0, row=2, rowspan=4, pady=(20,0), padx=(20,0), sticky="w")
 
-        self.radio_strength_label = CTkLabel(self.frame, text="80dB", font=c.HEADER_FONT_NORMAL)
+        self.radio_strength_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.radio_strength_label.grid(column=1, row=2, padx=(5,0), pady=(10,0), sticky="w")
-        self.est_altitude_label = CTkLabel(self.frame, text="150m", font=c.HEADER_FONT_NORMAL)
+        self.est_altitude_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.est_altitude_label.grid(column=1, row=3, padx=(5,0), pady=(10,0), sticky="w")
-        self.gps_altitude_label = CTkLabel(self.frame, text="152m", font=c.HEADER_FONT_NORMAL)
+        self.gps_altitude_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
-        self.est_speed_label = CTkLabel(self.frame, text="5m/s", font=c.HEADER_FONT_NORMAL)
+        self.est_speed_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
-        self.after(1000, self.record_data)
+        self.record_data()
+        self.animate_text()
 
     def record_data(self):
+        """Records data to file"""
         def task():
             try:
                 h.record_data()
@@ -81,6 +83,20 @@ class App(CTk):
 
         threading.Thread(target=task).start()
         self.after(1000, self.record_data)
+
+    def animate_text(self):
+        """Changes text fields in UI"""
+        self.radio_strength_reading, self.estimated_altitude = h.animate_text()
+        self.radio_strength_label.configure(text=f"{self.radio_strength_reading}dB")
+
+        if self.estimated_altitude is not None:
+            self.estimated_altitude = float(self.estimated_altitude)
+            self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
+        else:
+            self.est_altitude_label.configure(text="-")
+
+        self.after(1000, self.animate_text)
+
 
     def change_map(self, new_map: str):
         """Changes the view (tiles) of the map"""
