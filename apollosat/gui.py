@@ -27,8 +27,7 @@ class App(CTk):
         self.iconbitmap(c.APP_ICON)
         self.frame = CTkFrame(self)
         self.frame.pack(expand=True, fill=BOTH, pady=10, padx=10, anchor="center")
-        
-        
+                
         pil_image_banner = Image.open(get_resource_path(c.BANNER_IMAGE))
         pil_image_banner = pil_image_banner.resize((406,115))
         self.banner_image = ImageTk.PhotoImage(pil_image_banner)
