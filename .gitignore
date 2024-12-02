@@ -1,2 +1,4 @@
 .venv/
 __pycache__/
+apollosat/offline_map.py
+apollosat/offline.py

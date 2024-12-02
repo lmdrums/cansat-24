@@ -38,6 +38,7 @@ DATA_DICT = {
     "cansat_humidity":7,
     "cansat_gas":8
 }
+DATABASE_PATH = os.path.join(FILES_FOLDER, "offline_tiles.db")
 
 # Serial
 PORT = "COM3"

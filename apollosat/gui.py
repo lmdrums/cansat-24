@@ -43,12 +43,13 @@ class App(CTk):
         g.Pressure(self)
         g.Gas(self)
         
-        self.map = tkmap.TkinterMapView(self.frame, height=400, database_path="apollosat/offline_tiles.db", use_database_only=True)
-        self.map.grid(column=0, row=1, padx=(20,0),sticky="ew")
-        #self.map.set_position(48.860381, 2.338594)
-        self.map_option_menu = CTkOptionMenu(self.frame, values=["OpenStreetMap", "Google Normal", "Google Satellite"],
-                                             command=self.change_map, font=c.FONT, width=160)
-        self.map_option_menu.grid(column=2, row=5, pady=(10,0), sticky="e")
+        self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0, 
+                            use_database_only=True,
+                            database_path=c.DATABASE_PATH)
+        self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
+        self.map.set_zoom(9)
+        self.map.set_position(52.5, 0.5)
+        self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
         self.radio_strength.grid(column=0, row=2, padx=(20,0), pady=(10,0), sticky="e")
@@ -116,16 +117,6 @@ class App(CTk):
             self.est_altitude_label.configure(text="-")
 
         self.after(1000, self.animate_text)
-
-
-    def change_map(self, new_map: str):
-        """Changes the view (tiles) of the map"""
-        if new_map == "OpenStreetMap":
-            self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
-        elif new_map == "Google Normal":
-            self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
-        elif new_map == "Google Satellite":
-            self.map.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
      
 def main():
     app = App()
