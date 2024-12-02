@@ -3,7 +3,12 @@ import time
 import apollosat.constants as c
 import serial
 
-serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
+try:
+    serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
+except serial.serialutil.SerialException:
+    print("Groundstation not connected. Proceeding with empty GUI.")
+    serial_connection = None
+
 cansat_connected = False
 
 def permanent_file(filename: str) -> None:
@@ -31,7 +36,7 @@ def record_data(parent):
 
     if not cansat_connected:
         if raw_data:
-            parent.device_connected()
+            parent.flash_window_function("CanSat Connected")
             cansat_connected = True
 
     with open(c.MAIN_DATA, "a", encoding="utf-8") as file:
@@ -59,6 +64,7 @@ def animate(data_dict: dict, key: str) -> tuple:
     return x_list, y_list
 
 def animate_text() -> tuple:
+    """Updates the text fields every second"""
     radio_strength = None
     estimated_altitude = None
     

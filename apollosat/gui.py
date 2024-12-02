@@ -73,7 +73,9 @@ class App(CTk):
         self.record_data()
         self.animate_text()
 
-    def device_connected(self):
+    def flash_window_function(self, text: str):
+        """Creates a flash window (transparent)"""
+
         self.flash_window = CTkToplevel(self)
         self.flash_window.geometry(f"{self.winfo_width()}x{self.winfo_height()}+{self.winfo_x()}+{self.winfo_y()}")
         self.flash_window.overrideredirect(True)
@@ -82,7 +84,7 @@ class App(CTk):
 
         label = CTkLabel(
             self.flash_window, 
-            text="CanSat Connected!", 
+            text=text,
             font=("Segoe UI", 34, "bold"), 
             text_color="black",
             corner_radius=10
