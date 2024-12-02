@@ -43,7 +43,7 @@ class App(CTk):
         g.Pressure(self)
         g.Gas(self)
         
-        self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0, 
+        self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0,
                             use_database_only=True,
                             database_path=c.DATABASE_PATH)
         self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
