@@ -2,3 +2,4 @@
 __pycache__/
 apollosat/offline_map.py
 apollosat/offline.py
+apollosat/files/offline_tiles.db
