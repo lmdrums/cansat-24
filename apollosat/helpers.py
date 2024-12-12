@@ -2,6 +2,7 @@ from colorama import Style
 import time
 import apollosat.constants as c
 import serial
+from utils.path import get_resource_path
 
 try:
     serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
@@ -14,16 +15,16 @@ cansat_connected = False
 def permanent_file(filename: str) -> None:
     """Writes all data from temporary data.txt file and writes it to a permanent file"""
 
-    with open(c.MAIN_DATA, "r") as file:
+    with open(get_resource_path(c.MAIN_DATA), "r") as file:
         contents = file.read()
 
-    with open(filename, "a") as file:
+    with open(get_resource_path(filename), "a") as file:
         file.write(contents)
 
 def wipe_file(filename: str):
     """Deletes contents of data file at beginning of program"""
 
-    with open(filename, "w") as file:
+    with open(get_resource_path(filename), "w") as file:
         file.truncate()
 
 def record_data(parent):
@@ -39,7 +40,7 @@ def record_data(parent):
             parent.flash_window_function("CanSat Connected")
             cansat_connected = True
 
-    with open(c.MAIN_DATA, "a", encoding="utf-8") as file:
+    with open(get_resource_path(c.MAIN_DATA), "a", encoding="utf-8") as file:
         file.write(f"{data}\n")
 
 def animate(data_dict: dict, key: str) -> tuple:
@@ -51,7 +52,7 @@ def animate(data_dict: dict, key: str) -> tuple:
     x_list = []
     y_list = []
 
-    with open(c.MAIN_DATA, "r") as file:
+    with open(get_resource_path(c.MAIN_DATA), "r") as file:
         for line in file:
             if len(line.strip()) > 0:
                 try:
@@ -68,7 +69,7 @@ def animate_text() -> tuple:
     radio_strength = None
     estimated_altitude = None
     
-    with open(c.MAIN_DATA, "r") as file:
+    with open(get_resource_path(c.MAIN_DATA), "r") as file:
         for line in file:
             if len(line.strip()) > 0:
                 try:

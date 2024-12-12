@@ -24,7 +24,7 @@ class App(CTk):
 
         # Sets up the app
         self.title(c.APP_TITLE)
-        self.iconbitmap(c.APP_ICON)
+        self.iconbitmap(get_resource_path(c.APP_ICON))
         self.frame = CTkFrame(self)
         self.frame.pack(expand=True, fill=BOTH, pady=10, padx=10, anchor="center")
                 
