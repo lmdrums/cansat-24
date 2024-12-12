@@ -67,6 +67,7 @@ class Humidity:
         """Animates the graph every second"""
 
         x_list, y_list = h.animate(c.DATA_DICT, "cansat_humidity")
+        x2_list, y2_list = h.animate(c.DATA_DICT, "ground_humidity")
 
         # Determine the initial packet count
         if self.first_packet_count is None and x_list:
@@ -75,13 +76,14 @@ class Humidity:
         # Adjust x values to start from zero
         if self.first_packet_count is not None:
             x_list = [x - self.first_packet_count for x in x_list]
-
+            x2_list = [x - self.first_packet_count for x in x2_list]
         self.ax.clear()
         self.ax.set_title("Humidity (%)", **font)
         self.ax.set_ylabel("Humidity (%)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.set_ylim(0,100)
         self.ax.plot(x_list, y_list, label="Cansat")
+        self.ax.plot(x2_list, y2_list, label="Groundstation")
         self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))        
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)
@@ -116,11 +118,12 @@ class Pressure:
         if self.first_packet_count is not None:
             x_list = [x - self.first_packet_count for x in x_list]
             x2_list = [x - self.first_packet_count for x in x2_list]
-        
+
         self.ax.clear()
         self.ax.set_title("Pressure (hPa)", **font)
         self.ax.set_ylabel("Pressure (hPa)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
+        self.ax.ticklabel_format(useOffset=False, style='plain', axis='y')
         self.ax.plot(x_list, y_list, label="Cansat")
         self.ax.plot(x2_list, y2_list, label="Groundstation")
         self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -147,6 +150,7 @@ class Gas:
         """Animates the graph every second"""
 
         x_list, y_list = h.animate(c.DATA_DICT, "cansat_gas")
+        x2_list, y2_list = h.animate(c.DATA_DICT, "ground_gas")
 
         # Determine the initial packet count
         if self.first_packet_count is None and x_list:
@@ -155,12 +159,14 @@ class Gas:
         # Adjust x values to start from zero
         if self.first_packet_count is not None:
             x_list = [x - self.first_packet_count for x in x_list]
-            
+            x2_list = [x - self.first_packet_count for x in x2_list]
+
         self.ax.clear()
         self.ax.set_title("Gas Quality (Ω)", **font)
         self.ax.set_ylabel("Gas Quality (Ω)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.plot(x_list, y_list, label="Cansat")
+        self.ax.plot(x2_list, y2_list, label="Groundstation")
         self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         self.ax.spines["right"].set_visible(False)
         self.ax.spines["top"].set_visible(False)

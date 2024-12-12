@@ -32,11 +32,13 @@ DATA_DICT = {
     "radio_strength":1,
     "ground_temperature":2,
     "ground_pressure":3,
-    "cansat_temperature":4,
-    "cansat_pressure":5,
-    "cansat_estimated_altitude":6,
-    "cansat_humidity":7,
-    "cansat_gas":8
+    "ground_humidity":4,
+    "ground_gas":5,
+    "cansat_temperature":6,
+    "cansat_pressure":7,
+    "cansat_estimated_altitude":8,
+    "cansat_humidity":9,
+    "cansat_gas":10
 }
 DATABASE_PATH = os.path.join(FILES_FOLDER, "offline_tiles.db")
 
