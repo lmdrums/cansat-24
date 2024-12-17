@@ -41,16 +41,19 @@ class Temp:
         self.ax.set_title("Temperature (°C)", **font)
         self.ax.set_ylabel("Temperature (°C)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
-        self.ax.plot(x_list, y_list, label="Cansat")
-        self.ax.plot(x2_list, y2_list, label="Groundstation")
-        self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        self.ax.spines["right"].set_visible(False)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.legend(fontsize="9")
-        self.ax.patch.set_edgecolor("black")
-        self.ax.patch.set_linewidth(1)
-        self.canvas.draw()
-        self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        try:
+            self.ax.plot(x_list, y_list, label="Cansat")
+            self.ax.plot(x2_list, y2_list, label="Groundstation")
+            self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            self.ax.spines["right"].set_visible(False)
+            self.ax.spines["top"].set_visible(False)
+            self.ax.legend(fontsize="9")
+            self.ax.patch.set_edgecolor("black")
+            self.ax.patch.set_linewidth(1)
+            self.canvas.draw()
+            self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        except ValueError:
+            return
 
 class Humidity:
     def __init__(self, parent: CTk) -> None:
@@ -82,16 +85,19 @@ class Humidity:
         self.ax.set_ylabel("Humidity (%)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.set_ylim(0,100)
-        self.ax.plot(x_list, y_list, label="Cansat")
-        self.ax.plot(x2_list, y2_list, label="Groundstation")
-        self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))        
-        self.ax.spines["right"].set_visible(False)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.legend(fontsize="9")
-        self.ax.patch.set_edgecolor("black")
-        self.ax.patch.set_linewidth(1)
-        self.canvas.draw()
-        self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        try:
+            self.ax.plot(x_list, y_list, label="Cansat")
+            self.ax.plot(x2_list, y2_list, label="Groundstation")
+            self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))        
+            self.ax.spines["right"].set_visible(False)
+            self.ax.spines["top"].set_visible(False)
+            self.ax.legend(fontsize="9")
+            self.ax.patch.set_edgecolor("black")
+            self.ax.patch.set_linewidth(1)
+            self.canvas.draw()
+            self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        except ValueError:
+            return
 
 class Pressure:
     def __init__(self, parent: CTk) -> None:
@@ -124,16 +130,19 @@ class Pressure:
         self.ax.set_ylabel("Pressure (hPa)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.ticklabel_format(useOffset=False, style='plain', axis='y')
-        self.ax.plot(x_list, y_list, label="Cansat")
-        self.ax.plot(x2_list, y2_list, label="Groundstation")
-        self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        self.ax.spines["right"].set_visible(False)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.legend(fontsize="9")
-        self.ax.patch.set_edgecolor("black")
-        self.ax.patch.set_linewidth(1)
-        self.canvas.draw()
-        self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        try:
+            self.ax.plot(x_list, y_list, label="Cansat")
+            self.ax.plot(x2_list, y2_list, label="Groundstation")
+            self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            self.ax.spines["right"].set_visible(False)
+            self.ax.spines["top"].set_visible(False)
+            self.ax.legend(fontsize="9")
+            self.ax.patch.set_edgecolor("black")
+            self.ax.patch.set_linewidth(1)
+            self.canvas.draw()
+            self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        except ValueError:
+            return
 
 class Gas:
     def __init__(self, parent: CTk) -> None:
@@ -165,13 +174,16 @@ class Gas:
         self.ax.set_title("Gas Quality (Ω)", **font)
         self.ax.set_ylabel("Gas Quality (Ω)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
-        self.ax.plot(x_list, y_list, label="Cansat")
-        self.ax.plot(x2_list, y2_list, label="Groundstation")
-        self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        self.ax.spines["right"].set_visible(False)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.legend(fontsize="9")
-        self.ax.patch.set_edgecolor("black")
-        self.ax.patch.set_linewidth(1)
-        self.canvas.draw()
-        self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        try:
+            self.ax.plot(x_list, y_list, label="Cansat")
+            self.ax.plot(x2_list, y2_list, label="Groundstation")
+            self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            self.ax.spines["right"].set_visible(False)
+            self.ax.spines["top"].set_visible(False)
+            self.ax.legend(fontsize="9")
+            self.ax.patch.set_edgecolor("black")
+            self.ax.patch.set_linewidth(1)
+            self.canvas.draw()
+            self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
+        except ValueError:
+            return

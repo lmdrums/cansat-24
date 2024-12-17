@@ -44,25 +44,37 @@ def record_data(parent):
         file.write(f"{data}\n")
 
 def animate(data_dict: dict, key: str) -> tuple:
-    """Pulls and returns data from the txt files so that the graph can be updated"""
-
+    """Pulls and returns data from the txt files so that the graph can be updated.
+    Deletes malformed packets from the data file."""
+    
     column_index = data_dict[key]
     packet_index = data_dict["packet_count"]
-
+    
     x_list = []
     y_list = []
-
+    valid_lines = []  # Store valid lines to rewrite the file later
+    
     with open(get_resource_path(c.MAIN_DATA), "r") as file:
         for line in file:
             if len(line.strip()) > 0:
                 try:
                     columns = line.split()  # Split line into columns by spaces
-                    x_list.append(int(columns[packet_index]))
-                    y_list.append(float(columns[column_index]))
-                except (IndexError, ValueError) as e:
-                    print(f"Skipping deformed line: {line.strip()} - {e}")
-
+                    x_value = int(columns[packet_index])
+                    y_value = float(columns[column_index])
+                    
+                    x_list.append(x_value)
+                    y_list.append(y_value)
+                    
+                    valid_lines.append(line)
+                except (IndexError, ValueError):
+                    continue # Skip malformed lines
+    
+    # Rewrite the file with only valid lines
+    with open(get_resource_path(c.MAIN_DATA), "w") as file:
+        file.writelines(valid_lines)
+    
     return x_list, y_list
+
 
 def animate_text() -> tuple:
     """Updates the text fields every second"""
@@ -79,7 +91,7 @@ def animate_text() -> tuple:
                     estimated_altitude = data_fields[c.DATA_DICT["cansat_estimated_altitude"]]
                    
                 except (IndexError, ValueError) as e:
-                    print(f"Skipping deformed line: {line.strip()} - {e}")
+                    pass
     
     return radio_strength, estimated_altitude
 
