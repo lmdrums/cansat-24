@@ -1,159 +1,147 @@
-import pygame
-from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from figure import *
-from tkinter import *
-from tkinter import ttk
-import time
+import pygame
+from pygame.locals import *
 import serial
-import threading
 
-ApplicationGL = False
+#ser = serial.Serial('/dev/tty.usbserial', 38400, timeout=1)
+ser = serial.Serial('COM3', 9600, timeout=1)
 
-class PortSettings:
-    Name = "COM1"
-    Speed = 9600
-    Timeout = 2
-class IMU:
-    Roll = 0
-    Pitch = 0
-    Yaw = 0
+ax = ay = az = 0.0
+yaw_mode = False
 
+def resize(width, height):
+    if height==0:
+        height=1
+    glViewport(0, 0, width, height)
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(45, 1.0*width/height, 0.1, 100.0)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
 
-
-myport = PortSettings()
-myimu  = IMU()
-
-def RunAppliction():
-    global ApplicationGL
-    myport.Name = Port_entry.get()
-    myport.Speed = Baud_entry.get()
-    ApplicationGL = True
-    ConfWindw.destroy()
-
-ConfWindw = Tk()
-ConfWindw.title("Configure Serial Port")
-ConfWindw.configure(bg = "#2E2D40") 
-ConfWindw.geometry('300x150')
-ConfWindw.resizable(width=False, height=False)
-positionRight = int(ConfWindw.winfo_screenwidth()/2 - 300/2)
-positionDown = int(ConfWindw.winfo_screenheight()/2 - 150/2)
-ConfWindw.geometry("+{}+{}".format(positionRight, positionDown))
-
-Port_label = Label(text = "Port:",font =("",12),justify= "right",bg = "#2E2D40",fg = "#FFFFFF")
-Port_label.place(x = 50, y =30,anchor = "center")
-Port_entry = Entry(width = 20,bg = "#37364D", fg = "#FFFFFF", justify = "center")
-Port_entry.insert(INSERT,myport.Name)
-Port_entry.place(x = 180, y = 30,anchor = "center")
-
-Baud_label = Label(text = "Speed:",font =("",12),justify= "right",bg = "#2E2D40",fg = "#FFFFFF")
-Baud_label.place(x = 50, y =80,anchor = "center")
-Baud_entry = Entry(width = 20,bg = "#37364D", fg = "#FFFFFF", justify = "center")
-Baud_entry.insert(INSERT,str(myport.Speed))
-Baud_entry.place(x = 180, y = 80,anchor = "center")
-
-ok_button = Button(text = "Ok",width = 8,command = RunAppliction,bg="#135EF2",fg ="#FFFFFF")
-ok_button.place(x = 150, y = 120,anchor="center")
-
-def InitPygame():
-    global display
-    pygame.init()
-    display = (640,480)
-    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
-    pygame.display.set_caption('IMU visualizer   (Press Esc to exit)')
-
-
-def InitGL():
-    glClearColor((1.0/255*46),(1.0/255*45),(1.0/255*64),1)
+def init():
+    glShadeModel(GL_SMOOTH)
+    glClearColor(0.0, 0.0, 0.0, 0.0)
+    glClearDepth(1.0)
     glEnable(GL_DEPTH_TEST)
     glDepthFunc(GL_LEQUAL)
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
-    gluPerspective(100, (display[0]/display[1]), 0.1, 50.0)
-    glTranslatef(0.0,0.0, -5)
+def drawText(position, textString):     
+    font = pygame.font.SysFont ("Courier", 18, True)
+    textSurface = font.render(textString, True, (255,255,255,255), (0,0,0,255))     
+    textData = pygame.image.tostring(textSurface, "RGBA", True)     
+    glRasterPos3d(*position)     
+    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
 
-
-def DrawText(textString):     
-    font = pygame.font.SysFont ("Courier New",25, True)
-    textSurface = font.render(textString, True, (255,255,0), (46,45,64,255))     
-    textData = pygame.image.tostring(textSurface, "RGBA", True)         
-    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)    
-
-def DrawBoard():
+def draw():
+    global rquad
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
     
-    glBegin(GL_QUADS)
-    x = 0
-    
-    for surface in surfaces:
-        
-        for vertex in surface:  
-            glColor3fv((colors[x]))          
-            glVertex3fv(vertices[vertex])
-        x += 1
-    glEnd()
+    glLoadIdentity()
+    glTranslatef(0,0.0,-7.0)
 
-def DrawGL():
+    osd_text = "pitch: " + str("{0:.2f}".format(ay)) + ", roll: " + str("{0:.2f}".format(ax))
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity() 
-    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
-    glTranslatef(0.0,0.0, -5)   
+    if yaw_mode:
+        osd_line = osd_text + ", yaw: " + str("{0:.2f}".format(az))
+    else:
+        osd_line = osd_text
 
-    glRotatef(round(myimu.Pitch,1), 0, 0, 1)
-    glRotatef(round(myimu.Roll,1), -1, 0, 0)
+    drawText((-2,-2, 2), osd_line)
 
-    DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
-    DrawBoard()
-    pygame.display.flip()
+    # the way I'm holding the IMU board, X and Y axis are switched 
+    # with respect to the OpenGL coordinate system
+    if yaw_mode:                             # experimental
+        glRotatef(az, 0.0, 1.0, 0.0)  # Yaw,   rotate around y-axis
+    else:
+        glRotatef(0.0, 0.0, 1.0, 0.0)
+    glRotatef(ay ,1.0,0.0,0.0)        # Pitch, rotate around x-axis
+    glRotatef(-1*ax ,0.0,0.0,1.0)     # Roll,  rotate around z-axis
 
-def SerialConnection ():
-    global serial_object
-    serial_object = serial.Serial( myport.Name, baudrate= myport.Speed, timeout = myport.Timeout)
+    glBegin(GL_QUADS)	
+    glColor3f(0.0,1.0,0.0)
+    glVertex3f( 1.0, 0.2,-1.0)
+    glVertex3f(-1.0, 0.2,-1.0)		
+    glVertex3f(-1.0, 0.2, 1.0)		
+    glVertex3f( 1.0, 0.2, 1.0)		
 
-def ReadData():
-    while True:
-        
-        serial_input = serial_object.readline()
-        if(len(serial_input) == 9 and serial_input[0] == 0x24 ): 
-            X = [serial_input[2], serial_input[1]]
-            Ax = int.from_bytes(X,byteorder = 'big',signed=True)
+    glColor3f(1.0,0.5,0.0)	
+    glVertex3f( 1.0,-0.2, 1.0)
+    glVertex3f(-1.0,-0.2, 1.0)		
+    glVertex3f(-1.0,-0.2,-1.0)		
+    glVertex3f( 1.0,-0.2,-1.0)		
 
-            Y = [serial_input[4], serial_input[3]]
-            Ay = int.from_bytes(Y,byteorder = 'big',signed=True)
+    glColor3f(1.0,0.0,0.0)		
+    glVertex3f( 1.0, 0.2, 1.0)
+    glVertex3f(-1.0, 0.2, 1.0)		
+    glVertex3f(-1.0,-0.2, 1.0)		
+    glVertex3f( 1.0,-0.2, 1.0)		
 
-            myimu.Roll = Ax/16384.0*90
-            myimu.Pitch = Ay/16384.0*90
+    glColor3f(1.0,1.0,0.0)	
+    glVertex3f( 1.0,-0.2,-1.0)
+    glVertex3f(-1.0,-0.2,-1.0)
+    glVertex3f(-1.0, 0.2,-1.0)		
+    glVertex3f( 1.0, 0.2,-1.0)		
 
+    glColor3f(0.0,0.0,1.0)	
+    glVertex3f(-1.0, 0.2, 1.0)
+    glVertex3f(-1.0, 0.2,-1.0)		
+    glVertex3f(-1.0,-0.2,-1.0)		
+    glVertex3f(-1.0,-0.2, 1.0)		
+
+    glColor3f(1.0,0.0,1.0)	
+    glVertex3f( 1.0, 0.2,-1.0)
+    glVertex3f( 1.0, 0.2, 1.0)
+    glVertex3f( 1.0,-0.2, 1.0)		
+    glVertex3f( 1.0,-0.2,-1.0)		
+    glEnd()	
+         
+def read_data():
+    global ax, ay, az
+    ax = ay = az = 0.0
+    line_done = 0
+
+    # request data by sending a dot
+    #ser.write(b".") #* encode string to bytes
+    #while not line_done:
+    line = ser.readline() 
+    angles = line.split(b" ")
+    if len(angles) == 3:    
+        ax = float(angles[11])
+        ay = float(angles[12])
+        az = float(angles[13])
+        line_done = 1 
 
 def main():
-    ConfWindw.mainloop()
-    if ApplicationGL == True:
-        InitPygame()
-        InitGL()
- 
-        try:
-            SerialConnection()
-            myThread1 = threading.Thread(target = ReadData)
-            myThread1.daemon = True
-            myThread1.start() 
-            while True:
-                event = pygame.event.poll()
-                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                    pygame.quit()
-                    break 
+    global yaw_mode
 
-                DrawGL()
-                pygame.time.wait(10)
+    video_flags = OPENGL|DOUBLEBUF
+    
+    pygame.init()
+    screen = pygame.display.set_mode((640,480), video_flags)
+    pygame.display.set_caption("Press Esc to quit, z toggles yaw mode")
+    resize(640,480)
+    init()
+    frames = 0
+    ticks = pygame.time.get_ticks()
+    while 1:
+        event = pygame.event.poll()
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            pygame.quit()  #* quit pygame properly
+            break       
+        if event.type == KEYDOWN and event.key == K_z:
+            yaw_mode = not yaw_mode
+            ser.write(b"z")
+        read_data()
+        draw()
+      
+        pygame.display.flip()
+        frames = frames+1
 
-        except:
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-            DrawText("Sorry, something is wrong :c")
-            pygame.display.flip()
-            time.sleep(5)
-
-                 
-
+    print ("fps:  %d" % ((frames*1000)/(pygame.time.get_ticks()-ticks)))
+    ser.close()
 
 if __name__ == '__main__':
     main()
