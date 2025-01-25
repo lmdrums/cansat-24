@@ -47,7 +47,6 @@ class App(CTk):
                             database_path=c.DATABASE_PATH)
         self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
         self.map.set_zoom(9)
-        self.map.set_position(52.5, 0.5)
         self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
@@ -114,6 +113,14 @@ class App(CTk):
             self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
         else:
             self.est_altitude_label.configure(text="-")
+
+        self.latitude, self.longitude, self.altitude, self.time, self.speed = h.get_gps_data()
+
+        if self.latitude is not None:
+            self.map.set_position(self.latitude, self.longitude)
+            self.map.set_marker(self.latitude, self.longitude)
+            self.gps_altitude_label.configure(text=f"{self.altitude} m")
+            self.est_speed_label.configure(text=f"{self.speed} knots")
 
         self.after(1000, self.animate_text)
      
