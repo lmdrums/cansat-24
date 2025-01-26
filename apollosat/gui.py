@@ -43,11 +43,12 @@ class App(CTk):
         g.Gas(self)
         
         self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0,
-                            use_database_only=True,
+                            use_database_only=False,
                             database_path=c.DATABASE_PATH)
         self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
         self.map.set_zoom(9)
-        self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
+        #self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
+        self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
         self.radio_strength.grid(column=0, row=2, padx=(20,0), pady=(10,0), sticky="e")
@@ -69,6 +70,8 @@ class App(CTk):
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
         self.est_speed_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
+        self.clock_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
+        self.clock_label.grid(column=2, row=5, padx=(5,0), pady=(10,0), sticky="e")
         self.record_data()
         self.animate_text()
 
@@ -105,24 +108,31 @@ class App(CTk):
 
     def animate_text(self):
         """Changes text fields in UI"""
-        self.radio_strength_reading, self.estimated_altitude = h.animate_text()
-        self.radio_strength_label.configure(text=f"{self.radio_strength_reading}dB")
+        try:
+            self.radio_strength_reading, self.estimated_altitude = h.animate_text()
+            self.radio_strength_label.configure(text=f"{self.radio_strength_reading}dB")
 
-        if self.estimated_altitude is not None:
-            self.estimated_altitude = float(self.estimated_altitude)
-            self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
-        else:
-            self.est_altitude_label.configure(text="-")
+            if self.estimated_altitude is not None:
+                self.estimated_altitude = float(self.estimated_altitude)
+                self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
+            else:
+                self.est_altitude_label.configure(text="-")
 
-        self.latitude, self.longitude, self.altitude, self.time, self.speed = h.get_gps_data()
+            self.latitude, self.longitude, self.altitude, self.time, self.speed, self.gps_time = h.get_gps_data()
 
-        if self.latitude is not None:
-            self.map.set_position(self.latitude, self.longitude)
-            self.map.set_marker(self.latitude, self.longitude)
-            self.gps_altitude_label.configure(text=f"{self.altitude} m")
-            self.est_speed_label.configure(text=f"{self.speed} knots")
+            if self.latitude is not None:
+                self.map.set_position(self.latitude, self.longitude)
+                self.map.delete_all_marker()
+                self.map.set_marker(self.latitude, self.longitude)
+                self.gps_altitude_label.configure(text=f"{self.altitude}m")
+                self.est_speed_label.configure(text=f"{self.speed} knots")
+                self.clock_label.configure(text=self.gps_time)
 
-        self.after(1000, self.animate_text)
+            self.after(1000, self.animate_text)
+
+        except Exception as e:
+            h.delete_line()
+            self.animate_text()
      
 def main():
     app = App()

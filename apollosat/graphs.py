@@ -5,7 +5,6 @@ from matplotlib.ticker import MaxNLocator
 
 import apollosat.helpers as h
 import apollosat.constants as c
-from utils.path import get_resource_path
 
 font = {"fontname":"Segoe UI"}
 
@@ -50,9 +49,14 @@ class Temp:
             self.ax.legend(fontsize="9")
             self.ax.patch.set_edgecolor("black")
             self.ax.patch.set_linewidth(1)
+            if y_list:
+                min_pressure = min(min(y_list), min(y2_list))
+                max_pressure = max(max(y_list), max(y2_list))
+                self.ax.set_ylim(min_pressure - 1, max_pressure + 1)
             self.canvas.draw()
             self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
         except ValueError:
+            h.delete_line()
             return
 
 class Humidity:
@@ -97,6 +101,7 @@ class Humidity:
             self.canvas.draw()
             self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
         except ValueError:
+            h.delete_line()
             return
 
 class Pressure:
@@ -130,6 +135,7 @@ class Pressure:
         self.ax.set_ylabel("Pressure (hPa)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
         self.ax.ticklabel_format(useOffset=False, style='plain', axis='y')
+
         try:
             self.ax.plot(x_list, y_list, label="Cansat")
             self.ax.plot(x2_list, y2_list, label="Groundstation")
@@ -139,9 +145,14 @@ class Pressure:
             self.ax.legend(fontsize="9")
             self.ax.patch.set_edgecolor("black")
             self.ax.patch.set_linewidth(1)
+            if y_list:
+                min_pressure = min(min(y_list), min(y2_list))
+                max_pressure = max(max(y_list), max(y2_list))
+                self.ax.set_ylim(min_pressure - 10, max_pressure + 10)
             self.canvas.draw()
             self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
         except ValueError:
+            h.delete_line()
             return
 
 class Gas:
@@ -159,7 +170,7 @@ class Gas:
         """Animates the graph every second"""
 
         x_list, y_list = h.animate(c.DATA_DICT, "cansat_gas")
-        x2_list, y2_list = h.animate(c.DATA_DICT, "ground_gas")
+        #x2_list, y2_list = h.animate(c.DATA_DICT, "ground_gas")
 
         # Determine the initial packet count
         if self.first_packet_count is None and x_list:
@@ -168,7 +179,7 @@ class Gas:
         # Adjust x values to start from zero
         if self.first_packet_count is not None:
             x_list = [x - self.first_packet_count for x in x_list]
-            x2_list = [x - self.first_packet_count for x in x2_list]
+            #x2_list = [x - self.first_packet_count for x in x2_list]
 
         self.ax.clear()
         self.ax.set_title("Gas Quality (Ω)", **font)
@@ -176,7 +187,7 @@ class Gas:
         self.ax.set_xlabel("Time (~s)", **font)
         try:
             self.ax.plot(x_list, y_list, label="Cansat")
-            self.ax.plot(x2_list, y2_list, label="Groundstation")
+            #self.ax.plot(x2_list, y2_list, label="Groundstation")
             self.ax.xaxis.set_major_locator(MaxNLocator(integer=True))
             self.ax.spines["right"].set_visible(False)
             self.ax.spines["top"].set_visible(False)
@@ -186,4 +197,5 @@ class Gas:
             self.canvas.draw()
             self.parent.after(1000, self.animate) # Change this value if refresh rate IS NOT 1 second
         except ValueError:
+            h.delete_line()
             return
