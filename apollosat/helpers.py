@@ -90,8 +90,8 @@ def animate_text() -> tuple:
                     radio_strength = data_fields[c.DATA_DICT["radio_strength"]]
                     estimated_altitude = data_fields[c.DATA_DICT["cansat_estimated_altitude"]]
                    
-                except (IndexError, ValueError) as e:
-                    pass
+                except (IndexError, ValueError):
+                    continue
     
     return radio_strength, estimated_altitude
 
@@ -166,10 +166,18 @@ def get_gps_data() -> tuple:
                     actual_longitude = convert_to_decimal(degrees1, minutes1)
                     if gngga_data["long_direction"] == "W":
                         actual_longitude *= -1
-                    return actual_latitude, actual_longitude, gngga_data["estimated_altitude"], gngga_data["time"], gnrmc_data["speed"]
+                    return (actual_latitude, actual_longitude, gngga_data["estimated_altitude"],
+                            gngga_data["time"], gnrmc_data["speed"], gngga_data["time"])
 
                 except Exception as e:
-                    print(e)
-                    return None, None, None, None, None
+                    return None, None, None, None, None, None
 
-    return None, None, None, None, None
+    return None, None, None, None, None, None
+
+def delete_line():
+    with open(get_resource_path(c.MAIN_DATA), "r") as file:
+        lines = file.readlines()
+    lines.pop()
+
+    with open(get_resource_path(c.MAIN_DATA), "w") as file:
+        file.writelines(lines)
