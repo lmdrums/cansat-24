@@ -43,12 +43,13 @@ class App(CTk):
         g.Gas(self)
         
         self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0,
-                            use_database_only=False,
+                            use_database_only=True,
                             database_path=c.DATABASE_PATH)
         self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
         self.map.set_zoom(9)
-        #self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
-        self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
+        self.map.set_position(52.5, -1)
+        self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png") # OSM
+        #self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22) # Google Maps (normal)
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
         self.radio_strength.grid(column=0, row=2, padx=(20,0), pady=(10,0), sticky="e")

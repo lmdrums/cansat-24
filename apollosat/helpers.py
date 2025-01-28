@@ -169,7 +169,7 @@ def get_gps_data() -> tuple:
                     return (actual_latitude, actual_longitude, gngga_data["estimated_altitude"],
                             gngga_data["time"], gnrmc_data["speed"], gngga_data["time"])
 
-                except Exception as e:
+                except Exception:
                     return None, None, None, None, None, None
 
     return None, None, None, None, None, None
