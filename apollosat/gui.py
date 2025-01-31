@@ -53,8 +53,12 @@ class App(CTk):
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
         self.radio_strength.grid(column=0, row=2, padx=(20,0), pady=(10,0), sticky="e")
-        self.est_altitude = CTkLabel(self.frame, text=f"Estimated Altitude:", font=c.HEADER_FONT)
+        
+        ### CHANGE THIS TO ACCEL WHEN ACCELEROMETER ARRIVES!!
+        self.est_altitude = CTkLabel(self.frame, text=f"Acceleration:", font=c.HEADER_FONT) 
         self.est_altitude.grid(column=0, row=3, padx=(20,0), pady=(10,0), sticky="e")
+        ###
+
         self.gps_altitude = CTkLabel(self.frame, text=f"GPS Altitude:", font=c.HEADER_FONT)
         self.gps_altitude.grid(column=0, row=4, padx=(20,0), pady=(10,0), sticky="e")
         self.est_speed = CTkLabel(self.frame, text=f"Estimated Speed:", font=c.HEADER_FONT)
@@ -71,8 +75,8 @@ class App(CTk):
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
         self.est_speed_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
-        self.clock_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
-        self.clock_label.grid(column=2, row=5, padx=(5,0), pady=(10,0), sticky="e")
+        self.clock_label = CTkLabel(self.frame, text="-", font=("Consolas", 15))
+        self.clock_label.grid(column=2, row=5, padx=(5,0), pady=(5,0), sticky="e")
         self.record_data()
         self.animate_text()
 
@@ -115,7 +119,7 @@ class App(CTk):
 
             if self.estimated_altitude is not None:
                 self.estimated_altitude = float(self.estimated_altitude)
-                self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
+                #self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
             else:
                 self.est_altitude_label.configure(text="-")
 
