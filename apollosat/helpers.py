@@ -3,6 +3,7 @@ import time
 import apollosat.constants as c
 import serial
 from utils.path import get_resource_path
+import numpy as np
 
 try:
     serial_connection = serial.Serial(c.PORT, c.BAUDRATE, c.BYTESIZE, parity="N")
@@ -76,10 +77,9 @@ def animate(data_dict: dict, key: str) -> tuple:
     return x_list, y_list
 
 
-def animate_text() -> tuple:
+def radio_strength_reading() -> tuple:
     """Updates the text fields every second"""
     radio_strength = None
-    estimated_altitude = None
     
     with open(get_resource_path(c.MAIN_DATA), "r") as file:
         for line in file:
@@ -88,12 +88,11 @@ def animate_text() -> tuple:
                     data_fields = line.strip().split(" ")
 
                     radio_strength = data_fields[c.DATA_DICT["radio_strength"]]
-                    estimated_altitude = data_fields[c.DATA_DICT["cansat_estimated_altitude"]]
                    
                 except (IndexError, ValueError):
                     continue
     
-    return radio_strength, estimated_altitude
+    return radio_strength
 
 
 def gradient_text(text):
@@ -173,6 +172,37 @@ def get_gps_data() -> tuple:
                     return None, None, None, None, None, None
 
     return None, None, None, None, None, None
+
+def accelerometer_data():
+    with open(get_resource_path(c.MAIN_DATA), "r") as file:
+        lines = file.readlines()
+        if lines:
+            last_line = lines[-1]  # Get the last line
+            if len(last_line.strip()) > 0:
+                try:
+                    def acceleration(x, y, z):
+                        x = float(x)
+                        y = float(y)
+                        z = float(z)
+                        acceleration_reading = np.sqrt(x**2 + y**2 + z**2) - 9.81
+                        return acceleration_reading
+                    
+                    data_fields = last_line.strip().split(" ")
+                    accel_x = data_fields[c.DATA_DICT["accel_x"]]
+                    accel_y = data_fields[c.DATA_DICT["accel_y"]]
+                    accel_z = data_fields[c.DATA_DICT["accel_z"]]
+                    gyro_x = data_fields[c.DATA_DICT["gyro_x"]]
+                    gyro_y = data_fields[c.DATA_DICT["gyro_y"]]
+                    gyro_z = data_fields[c.DATA_DICT["gyro_z"]]
+
+                    acceleration_reading = acceleration(accel_x, accel_y, accel_z)
+                    return acceleration_reading  
+                    
+                except Exception as e:
+                    print(e)
+                    return None
+    return None
+                    
 
 def delete_line():
     with open(get_resource_path(c.MAIN_DATA), "r") as file:
