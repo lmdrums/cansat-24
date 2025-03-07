@@ -40,7 +40,13 @@ DATA_DICT = {
     "cansat_humidity":9,
     "cansat_gas":10,
     "cansat_gps_gngga":11,
-    "cansat_gps_gnrmc":12
+    "cansat_gps_gnrmc":12,
+    "accel_x":13,
+    "accel_y":14,
+    "accel_z":15,
+    "gyro_x":16,
+    "gyro_y":17,
+    "gyro_z":18
 }
 DATABASE_PATH = os.path.join(FILES_FOLDER, "offline_tiles.db")
 

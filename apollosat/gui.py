@@ -4,7 +4,6 @@ from customtkinter import (CTk, CTkLabel, CTkFrame, CTkEntry, CTkButton, CTkOpti
 import tkintermapview as tkmap
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-import numpy as np
 from PIL import Image, ImageTk
 
 import threading
@@ -43,7 +42,7 @@ class App(CTk):
         g.Gas(self)
         
         self.map = tkmap.map_widget.TkinterMapView(self.frame, height=400, corner_radius=0,
-                            use_database_only=True,
+                            use_database_only=False,
                             database_path=c.DATABASE_PATH)
         self.map.grid(column=0, row=1, padx=(20,0), sticky="ew")
         self.map.set_zoom(9)
@@ -53,12 +52,8 @@ class App(CTk):
 
         self.radio_strength = CTkLabel(self.frame, text=f"Radio Strength:", font=c.HEADER_FONT)
         self.radio_strength.grid(column=0, row=2, padx=(20,0), pady=(10,0), sticky="e")
-        
-        ### CHANGE THIS TO ACCEL WHEN ACCELEROMETER ARRIVES!!
-        self.est_altitude = CTkLabel(self.frame, text=f"Acceleration:", font=c.HEADER_FONT) 
-        self.est_altitude.grid(column=0, row=3, padx=(20,0), pady=(10,0), sticky="e")
-        ###
-
+        self.acceleration_label = CTkLabel(self.frame, text=f"Acceleration:", font=c.HEADER_FONT) 
+        self.acceleration_label.grid(column=0, row=3, padx=(20,0), pady=(10,0), sticky="e")
         self.gps_altitude = CTkLabel(self.frame, text=f"GPS Altitude:", font=c.HEADER_FONT)
         self.gps_altitude.grid(column=0, row=4, padx=(20,0), pady=(10,0), sticky="e")
         self.est_speed = CTkLabel(self.frame, text=f"Estimated Speed:", font=c.HEADER_FONT)
@@ -69,8 +64,8 @@ class App(CTk):
 
         self.radio_strength_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.radio_strength_label.grid(column=1, row=2, padx=(5,0), pady=(10,0), sticky="w")
-        self.est_altitude_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
-        self.est_altitude_label.grid(column=1, row=3, padx=(5,0), pady=(10,0), sticky="w")
+        self.acceleration_reading_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
+        self.acceleration_reading_label.grid(column=1, row=3, padx=(5,0), pady=(10,0), sticky="w")
         self.gps_altitude_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
         self.est_speed_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
@@ -114,14 +109,14 @@ class App(CTk):
     def animate_text(self):
         """Changes text fields in UI"""
         try:
-            self.radio_strength_reading, self.estimated_altitude = h.animate_text()
+            self.radio_strength_reading = h.radio_strength_reading()
             self.radio_strength_label.configure(text=f"{self.radio_strength_reading}dB")
+            self.acceleration_reading = h.accelerometer_data()
 
-            if self.estimated_altitude is not None:
-                self.estimated_altitude = float(self.estimated_altitude)
-                #self.est_altitude_label.configure(text=f"{round(self.estimated_altitude, 1)}m")
+            if self.acceleration_reading is not None:
+                self.acceleration_reading_label.configure(text=f"{self.acceleration_reading:.2f}m/s^2")
             else:
-                self.est_altitude_label.configure(text="-")
+                self.acceleration_reading_label.configure(text="-")
 
             self.latitude, self.longitude, self.altitude, self.time, self.speed, self.gps_time = h.get_gps_data()
 
@@ -133,9 +128,13 @@ class App(CTk):
                 self.est_speed_label.configure(text=f"{self.speed} knots")
                 self.clock_label.configure(text=self.gps_time)
 
+            #self.accel_x, self.accel_y, self.accel_z, self.gyro_x, self.gyro_y, self.gyro_z = h.accelerometer_data()
+            #print(self.accel_x, self.accel_y, self.accel_z, self.gyro_x, self.gyro_y, self.gyro_z)
+
             self.after(1000, self.animate_text)
 
         except Exception as e:
+            print(e)
             h.delete_line()
             self.animate_text()
      
