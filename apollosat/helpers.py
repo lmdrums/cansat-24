@@ -203,7 +203,6 @@ def accelerometer_data():
                     return None
     return None
                     
-
 def delete_line():
     with open(get_resource_path(c.MAIN_DATA), "r") as file:
         lines = file.readlines()
