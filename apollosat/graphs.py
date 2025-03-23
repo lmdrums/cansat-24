@@ -40,6 +40,7 @@ class Temp:
         self.ax.set_title("Temperature (°C)", **font)
         self.ax.set_ylabel("Temperature (°C)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
+        self.ax.set_ylim(5,35)
         try:
             self.ax.plot(x_list, y_list, label="Cansat")
             self.ax.plot(x2_list, y2_list, label="Groundstation")
@@ -134,6 +135,7 @@ class Pressure:
         self.ax.set_title("Pressure (hPa)", **font)
         self.ax.set_ylabel("Pressure (hPa)", **font)
         self.ax.set_xlabel("Time (~s)", **font)
+        self.ax.set_ylim(900,1100)
         self.ax.ticklabel_format(useOffset=False, style='plain', axis='y')
 
         try:

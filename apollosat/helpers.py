@@ -191,9 +191,6 @@ def accelerometer_data():
                     accel_x = data_fields[c.DATA_DICT["accel_x"]]
                     accel_y = data_fields[c.DATA_DICT["accel_y"]]
                     accel_z = data_fields[c.DATA_DICT["accel_z"]]
-                    gyro_x = data_fields[c.DATA_DICT["gyro_x"]]
-                    gyro_y = data_fields[c.DATA_DICT["gyro_y"]]
-                    gyro_z = data_fields[c.DATA_DICT["gyro_z"]]
 
                     acceleration_reading = acceleration(accel_x, accel_y, accel_z)
                     return acceleration_reading  
