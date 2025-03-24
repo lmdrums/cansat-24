@@ -70,10 +70,26 @@ class App(CTk):
         self.gps_altitude_label.grid(column=1, row=4, padx=(5,0), pady=(10,0), sticky="w")
         self.est_speed_label = CTkLabel(self.frame, text="-", font=c.HEADER_FONT_NORMAL)
         self.est_speed_label.grid(column=1, row=5, padx=(5,0), pady=(10,0), sticky="w")
-        self.clock_label = CTkLabel(self.frame, text="-", font=("Consolas", 15))
-        self.clock_label.grid(column=2, row=5, padx=(5,0), pady=(5,0), sticky="e")
+        self.clock_label = CTkLabel(self.frame, text="-", font=("Orbitron", 40))
+        self.clock_label.grid(column=2, row=1, padx=(5,0), pady=(5,0), sticky="nsew")
+
+        self.map_option_menu = CTkOptionMenu(self.frame, values=["OpenStreetMap", "Google Normal", "Google Satellite"],
+                                             command=self.change_map, font=c.FONT, width=160)
+        self.map_option_menu.grid(column=2, row=5, pady=(10,0), sticky="e")
+
         self.record_data()
         self.animate_text()
+
+    def change_map(self, new_map: str):
+        """Changes the view (tiles) of the map"""
+        if new_map == "OpenStreetMap":
+            self.map.set_tile_server("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
+ 
+        elif new_map == "Google Normal":
+            self.map.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga")
+ 
+        elif new_map == "Google Satellite":
+            self.map.set_tile_server("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga")
 
     def flash_window_function(self, text: str):
         """Creates a flash window (transparent)"""
@@ -87,7 +103,7 @@ class App(CTk):
         label = CTkLabel(
             self.flash_window, 
             text=text,
-            font=("Segoe UI", 34, "bold"), 
+            font=("Orbitron", 34, "bold"), 
             text_color="black",
             corner_radius=10
         )
@@ -114,7 +130,7 @@ class App(CTk):
             self.acceleration_reading = h.accelerometer_data()
 
             if self.acceleration_reading is not None:
-                self.acceleration_reading_label.configure(text=f"{self.acceleration_reading:.2f}m/s^2")
+                self.acceleration_reading_label.configure(text=f"{self.acceleration_reading:.2f}m/s²")
             else:
                 self.acceleration_reading_label.configure(text="-")
 
